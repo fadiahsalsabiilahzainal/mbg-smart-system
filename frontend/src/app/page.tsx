@@ -356,7 +356,7 @@ export default function LoginPage() {
         <div className="food-flake" style={{ top: "3%", left: "50%", width: "100px", position: "absolute" }}><img src="/assets/brokoli.png" alt="Brokoli" style={{ width: "100%", height: "auto" }} /></div>
         <div className="food-flake" style={{ top: "85%", left: "40%", width: "120px", position: "absolute" }}><img src="/assets/wortel.png" alt="Wortel" style={{ width: "100%", height: "auto" }} /></div>
         <div className="food-flake" style={{ top: "80%", left: "60%", width: "100px", position: "absolute" }}><img src="/assets/pisang.png" alt="Pisang" style={{ width: "100%", height: "auto" }} /></div>
-        <div className="food-flake" style={{ top: "7%", right: "7%", width: "100px", position: "absolute" }}><img src="/assets/Nasi.png" alt="Nasi" style={{ width: "100%", height: "auto" }} /></div>
+        <div className="food-flake" style={{ top: "7%", right: "7%", width: "100px", position: "absolute" }}><img src="/assets/nasi.png" alt="Nasi" style={{ width: "100%", height: "auto" }} /></div>
         <div className="food-flake" style={{ top: "40%", right: "3%", width: "100px", position: "absolute" }}><img src="/assets/pisang.png" alt="Pisang" style={{ width: "100%", height: "auto" }} /></div>
         <div className="food-flake" style={{ top: "15%", right: "25%", width: "100px", position: "absolute" }}><img src="/assets/telur.png" alt="Telur" style={{ width: "100%", height: "auto" }} /></div>
         <div className="food-flake" style={{ top: "30%", right: "15%", width: "90px", position: "absolute" }}><img src="/assets/tempe.png" alt="Tempe" style={{ width: "100%", height: "auto" }} /></div>
