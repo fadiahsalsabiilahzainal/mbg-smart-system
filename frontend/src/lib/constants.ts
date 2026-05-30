@@ -18,16 +18,10 @@ export const DATABASE_GIZI: Record<
 
   // Sayuran
   wortel: { nama: "Olahan Wortel", bdd: 100, kalori: 41, protein: 0.7, lemak: 1.5, karbo: 7.1, berat_porsi: 50 },
-  tumis_wortel: { nama: "Tumis Wortel", bdd: 100, kalori: 41, protein: 0.7, lemak: 1.5, karbo: 7.1, berat_porsi: 50 },
-  wortel_rebus: { nama: "Wortel Rebus", bdd: 100, kalori: 41, protein: 0.7, lemak: 1.5, karbo: 7.1, berat_porsi: 50 },
   sawi: { nama: "Tumis Sawi Putih", bdd: 100, kalori: 120, protein: 5.2, lemak: 6.9, karbo: 10.5, berat_porsi: 60 },
-  tumis_sawi: { nama: "Tumis Sawi Putih", bdd: 100, kalori: 120, protein: 5.2, lemak: 6.9, karbo: 10.5, berat_porsi: 60 },
 
   // Buah-buahan
   pisang: { nama: "Pisang Mas", bdd: 85, kalori: 127, protein: 1.4, lemak: 0.2, karbo: 33.6, berat_porsi: 80 },
-  pisang_mas: { nama: "Pisang Mas", bdd: 85, kalori: 127, protein: 1.4, lemak: 0.2, karbo: 33.6, berat_porsi: 80 },
   apel: { nama: "Apel Segar", bdd: 88, kalori: 58, protein: 0.3, lemak: 0.4, karbo: 14.9, berat_porsi: 100 },
-  apel_segar: { nama: "Apel Segar", bdd: 88, kalori: 58, protein: 0.3, lemak: 0.4, karbo: 14.9, berat_porsi: 100 },
   jeruk: { nama: "Jeruk Mandarin", bdd: 71, kalori: 44, protein: 0.8, lemak: 0.3, karbo: 10.9, berat_porsi: 75 },
-  jeruk_mandarin: { nama: "Jeruk Mandarin", bdd: 71, kalori: 44, protein: 0.8, lemak: 0.3, karbo: 10.9, berat_porsi: 75 },
 };
