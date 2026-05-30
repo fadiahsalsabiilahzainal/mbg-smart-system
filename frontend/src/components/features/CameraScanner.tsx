@@ -144,7 +144,7 @@ export default function CameraScanner({
       formData.append("file", blob, "foto_makanan.jpg");
 
       const responseAPI = await fetch(
-        "https://disengage-divisible-graffiti.ngrok-free.dev/deteksi",
+        "https://fdiahss-mbg-api-backend.hf.space/deteksi",
         {
           method: "POST",
           body: formData,
