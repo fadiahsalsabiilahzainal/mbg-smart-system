@@ -1,7 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 // Setup Library & Tipe Data
 import React, { useState, useEffect, useRef } from "react";
+import html2canvas from "html2canvas";
 import { supabase } from "../../lib/supabase";
 import { DATABASE_GIZI } from "../../lib/constants";
 
@@ -223,7 +227,7 @@ export default function CameraScanner({
     } catch (error) {
       console.error("Error API:", error);
       alert(
-        "Gagal memproses gambar! Pastikan link Ngrok dari Musda valid dan server jalan.",
+        "Gagal memproses gambar! Pastikan link backend valid dan server jalan.",
       );
       setCameraMode("input");
     } finally {
@@ -286,7 +290,7 @@ export default function CameraScanner({
     }
   };
 
-  // Fungsi Bagikan Laporan ke Aplikasi Lain (WhatsApp, dll)
+  // Fungsi Bagikan Laporan ke Aplikasi Lain (WhatsApp, dll) - VERSI SCREENSHOT HTML
   const handleShare = async () => {
     if (
       !detectionResult ||
@@ -295,7 +299,34 @@ export default function CameraScanner({
     )
       return;
 
+    // Ubah tulisan tombol biar user tau lagi loading
+    const btn = document.querySelector(".btn-share") as HTMLButtonElement;
+    const originalText = btn
+      ? btn.innerHTML
+      : `<img src="/assets/icon-share.png" alt="Bagikan" style="width: 24px; height: 24px; object-fit: contain;" /> Bagikan`;
+    if (btn) btn.innerHTML = "Memproses Gambar...";
+
     try {
+      // 1. Tangkap area HTML yang mau di-screenshot (id="capture-area")
+      const captureArea = document.getElementById("capture-area");
+      if (!captureArea) throw new Error("Area gambar tidak ditemukan");
+
+      // 2. Ubah HTML jadi Canvas, lalu jadi Blob (File Gambar Asli)
+      const canvas = await html2canvas(captureArea, {
+        useCORS: true, // Biar gambar dari luar ga error
+        scale: 2, // Biar resolusi screenshotnya jernih (HD)
+      });
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/jpeg", 0.9),
+      );
+      if (!blob) throw new Error("Gagal mengonversi gambar");
+
+      const file = new File([blob], "hasil-deteksi-mbg.jpg", {
+        type: "image/jpeg",
+      });
+
+      // 3. Siapkan Teks Laporan
       const waktuSekarang = new Date().toLocaleString("id-ID", {
         dateStyle: "full",
         timeStyle: "short",
@@ -317,13 +348,8 @@ ${daftarMakanan}
 --------------------------------------------------
 *Laporan ini dihasilkan secara otomatis oleh MBG Smart System.`;
 
+      // 4. Proses Share ke HP
       if (navigator.share && navigator.canShare) {
-        const response = await fetch(detectionResult.image);
-        const blob = await response.blob();
-        const file = new File([blob], "hasil-deteksi-mbg.jpg", {
-          type: blob.type,
-        });
-
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: "Laporan Deteksi MBG",
@@ -343,6 +369,9 @@ ${daftarMakanan}
       }
     } catch (error) {
       console.log("Membatalkan share atau error:", error);
+    } finally {
+      // Kembalikan tulisan tombol seperti semula
+      if (btn) btn.innerHTML = originalText;
     }
   };
 
