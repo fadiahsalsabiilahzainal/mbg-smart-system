@@ -215,7 +215,6 @@ export default function LoginPage() {
       if (resetMethod === "whatsapp") {
         query = query.eq("no_hp", resetPhone);
       } else {
-        // Menggunakan .ilike agar pencarian mengabaikan huruf besar/kecil di Supabase
         query = query.ilike("email", resetPhone.trim());
       }
 

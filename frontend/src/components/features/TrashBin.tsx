@@ -132,7 +132,7 @@ export default function TrashBin({
                       
                       <td style={{ padding: isMobile ? "15px" : "16px 14px", verticalAlign: "top" }}>
                         <div style={{ fontSize: isMobile ? "0.8rem" : "0.95rem", color: "#334155", fontWeight: "700", marginBottom: "6px" }}>
-                          {new Date(log.created_at).toLocaleString("id-ID")}
+                          {new Date(log.deleted_at).toLocaleString("id-ID")}
                         </div>
                         <div style={{ fontSize: isMobile ? "0.75rem" : "0.85rem", color: "#64748b", display: "flex", flexDirection: "column", gap: "4px", marginTop: "6px" }}>
                           <div style={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
