@@ -171,6 +171,9 @@ export default function CameraScanner({
       // Kalkulasi Estimasi Gizi Berdasarkan Output YOLO
       const mappedItems = hasilDeteksi
         .map((itemAI: any) => {
+          // aku ubah disini ya
+          if (itemAI.akurasi < 0.5 || (itemAI.akurasi > 1 && itemAI.akurasi < 50)) return null;
+
           const class_key = itemAI.lauk;
           const info_gizi = DATABASE_GIZI[class_key];
 
