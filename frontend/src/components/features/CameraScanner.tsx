@@ -181,10 +181,21 @@ export default function CameraScanner({
             }
 
             const beratRiil = beratAwal * (info_gizi.bdd / 100);
-            const kaloriItem = info_gizi.kalori * (beratRiil / 100);
-            const proteinItem = info_gizi.protein * (beratRiil / 100);
-            const lemakItem = info_gizi.lemak * (beratRiil / 100);
-            const karboItem = info_gizi.karbo * (beratRiil / 100);
+            
+            // JURUS 1: Hitung normal dulu pakai variabel let
+            let kaloriItem = info_gizi.kalori * (beratRiil / 100);
+            let proteinItem = info_gizi.protein * (beratRiil / 100);
+            let lemakItem = info_gizi.lemak * (beratRiil / 100);
+            let karboItem = info_gizi.karbo * (beratRiil / 100);
+
+            // JURUS 1 (Lanjutan): Nol-kan jika Basi
+            if (itemAI.kondisi === "BASI") {
+              statusNampanBasi = true;
+              kaloriItem = 0;
+              proteinItem = 0;
+              lemakItem = 0;
+              karboItem = 0;
+            }
 
             const akurasiNormal =
               itemAI.akurasi > 1 ? itemAI.akurasi / 100 : itemAI.akurasi;
@@ -192,14 +203,13 @@ export default function CameraScanner({
             totalKaloriNampan += kaloriItem;
             akumulasiConfidence += akurasiNormal;
 
-            if (itemAI.kondisi === "BASI") statusNampanBasi = true;
-
             return {
               x: itemAI.koordinat.x,
               y: itemAI.koordinat.y,
               status: itemAI.kondisi,
               confidence: akurasiNormal,
-              jenis_makanan: `${info_gizi.nama} (${beratAwal}g)`,
+              // JURUS 2: Tampilkan berat Netto (BDD) di UI
+              jenis_makanan: `${info_gizi.nama} (${beratAwal}g | Net: ${Number.isInteger(beratRiil) ? beratRiil : beratRiil.toFixed(1)}g)`,
               kalori: kaloriItem,
               protein: proteinItem,
               lemak: lemakItem,
@@ -290,7 +300,7 @@ export default function CameraScanner({
     }
   };
 
-  // Fungsi Bagikan Laporan ke Aplikasi Lain (WhatsApp, dll) - VERSI SCREENSHOT HTML
+  // Fungsi Bagikan Laporan ke Aplikasi Lain (WhatsApp, dll)
   const handleShare = async () => {
     if (
       !detectionResult ||
@@ -299,7 +309,6 @@ export default function CameraScanner({
     )
       return;
 
-    // Ubah tulisan tombol biar user tau lagi loading
     const btn = document.querySelector(".btn-share") as HTMLButtonElement;
     const originalText = btn
       ? btn.innerHTML
@@ -307,14 +316,12 @@ export default function CameraScanner({
     if (btn) btn.innerHTML = "Memproses Gambar...";
 
     try {
-      // 1. Tangkap area HTML yang mau di-screenshot (id="capture-area")
       const captureArea = document.getElementById("capture-area");
       if (!captureArea) throw new Error("Area gambar tidak ditemukan");
 
-      // 2. Ubah HTML jadi Canvas, lalu jadi Blob (File Gambar Asli)
       const canvas = await html2canvas(captureArea, {
-        useCORS: true, // Biar gambar dari luar ga error
-        scale: 2, // Biar resolusi screenshotnya jernih (HD)
+        useCORS: true,
+        scale: 2, 
       });
 
       const blob = await new Promise<Blob | null>((resolve) =>
@@ -326,7 +333,6 @@ export default function CameraScanner({
         type: "image/jpeg",
       });
 
-      // 3. Siapkan Teks Laporan
       const waktuSekarang = new Date().toLocaleString("id-ID", {
         dateStyle: "full",
         timeStyle: "short",
@@ -348,7 +354,6 @@ ${daftarMakanan}
 --------------------------------------------------
 *Laporan ini dihasilkan secara otomatis oleh MBG Smart System.`;
 
-      // 4. Proses Share ke HP
       if (navigator.share && navigator.canShare) {
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
@@ -370,7 +375,6 @@ ${daftarMakanan}
     } catch (error) {
       console.log("Membatalkan share atau error:", error);
     } finally {
-      // Kembalikan tulisan tombol seperti semula
       if (btn) btn.innerHTML = originalText;
     }
   };
@@ -780,8 +784,9 @@ ${daftarMakanan}
                             justifyContent: "space-between",
                           }}
                         >
+                          {/* JURUS 3: Gunakan toFixed(1) di semua baris ini */}
                           <span>Kalori:</span>{" "}
-                          <b>{Math.round(item.kalori)} kkal</b>
+                          <b>{item.kalori.toFixed(1)} kkal</b>
                         </div>
                         <div
                           style={{
@@ -790,7 +795,7 @@ ${daftarMakanan}
                           }}
                         >
                           <span>Protein:</span>{" "}
-                          <b>{Math.round(item.protein)} g</b>
+                          <b>{item.protein.toFixed(1)} g</b>
                         </div>
                         <div
                           style={{
@@ -798,7 +803,7 @@ ${daftarMakanan}
                             justifyContent: "space-between",
                           }}
                         >
-                          <span>Lemak:</span> <b>{Math.round(item.lemak)} g</b>
+                          <span>Lemak:</span> <b>{item.lemak.toFixed(1)} g</b>
                         </div>
                         <div
                           style={{
@@ -806,7 +811,7 @@ ${daftarMakanan}
                             justifyContent: "space-between",
                           }}
                         >
-                          <span>Karbo:</span> <b>{Math.round(item.karbo)} g</b>
+                          <span>Karbo:</span> <b>{item.karbo.toFixed(1)} g</b>
                         </div>
                       </div>
                     </div>
@@ -890,7 +895,8 @@ ${daftarMakanan}
                       color: "#153759",
                     }}
                   >
-                    {Math.round(detectionResult.total.kalori)}{" "}
+                    {/* JURUS 3: Gunakan toFixed(1) untuk kalori total */}
+                    {detectionResult.total.kalori.toFixed(1)}{" "}
                     <span style={{ fontSize: isMobile ? "0.55rem" : "0.9rem" }}>
                       kkal
                     </span>
