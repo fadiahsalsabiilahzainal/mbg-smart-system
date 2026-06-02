@@ -1069,6 +1069,24 @@ ${daftarMakanan}
               </button>
             </div>
           )}
+
+          {!isProcessing && detectionResult && (
+            <div
+              style={{
+                marginTop: "15px",
+                fontSize: isMobile ? "0.7rem" : "0.85rem",
+                color: "#64748b",
+                textAlign: "center",
+                padding: "0 10px",
+                fontStyle: "italic",
+                lineHeight: "1.4",
+                maxWidth: "700px",
+                margin: "15px auto 0",
+              }}
+            >
+              *Catatan: Nilai gizi di atas merupakan estimasi dinamis yang telah disesuaikan dengan berat porsi aktual dan persentase Berat Dapat Dimakan (BDD), sehingga nilai dapat berbeda dari tabel referensi standar (per 100g).
+            </div>
+          )}
         </div>
       )}
     </div>
