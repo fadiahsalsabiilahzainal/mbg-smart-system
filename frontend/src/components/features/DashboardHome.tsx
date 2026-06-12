@@ -166,8 +166,7 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
               </div>
             </div>
 
-            {/* TABEL DENGAN KOLOM PORSI URT DI PALING KANAN */}
-            <div className="table-container" style={{ width: "100%", overflowX: "auto", paddingBottom: "10px" }}>
+          <div className="table-container" style={{ width: "100%", overflowX: "auto", paddingBottom: "10px" }}>
               <table className="log-table" style={{ width: "100%", minWidth: "650px", borderCollapse: "collapse", fontSize: isMobile ? "0.85rem" : "1rem" }}>
                 <thead>
                   <tr style={{ textAlign: "center", backgroundColor: "#153759", color: "white" }}>
@@ -177,8 +176,8 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>Lemak<br/>(g)</th>
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>Karbo<br/>(g)</th>
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>BDD<br/>(%)</th>
-                    {/* INI KODE TAMBAHAN HEADER URT */}
-                    <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem", color: "#2ecc71" }}>Porsi<br/>(URT)</th>
+                    {/* Header Porsi URT disamakan warnanya (putih bawaan dari <tr>) */}
+                    <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>Porsi<br/>(URT)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -190,14 +189,13 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                       <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.lemak}</td>
                       <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.karbo}</td>
                       <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.bdd}%</td>
-                      {/* INI KODE TAMBAHAN ISI DATA URT */}
-                      <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "700", color: "#2ecc71" }}>{item.berat_porsi} g</td>
+                      {/* Isi Data Porsi URT disamakan font weight-nya jadi 600 dan hapus warna hijaunya */}
+                      <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.berat_porsi} g</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-
           </div>
         </div>
       )}
