@@ -145,7 +145,7 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                 Informasi Database & Istilah Gizi
               </h3>
               <div style={{ fontSize: isMobile ? "0.85rem" : "1rem", color: "var(--clr-navy-dark)", marginBottom: "18px", lineHeight: "1.6", fontWeight: "600" }}>
-                <strong>Sumber Data Nutrisi:</strong><br/>
+                <strong>Sumber Data Nutrisi (100g):</strong><br/>
                 Kalkulasi gizi pada sistem ini menggunakan metode Triangulasi Referensi Gizi yang merujuk pada tiga sumber utama, yaitu <strong>Tabel Komposisi Pangan Indonesia (TKPI) 2020</strong>, <strong>USDA FoodData Central</strong>, dan <strong>FatSecret Indonesia</strong>.
               </div>
               <div style={{ borderTop: "1px solid rgba(21, 55, 89, 0.1)", paddingTop: "12px", marginTop: "12px", fontSize: isMobile ? "0.85rem" : "0.95rem", color: "#475569", lineHeight: "1.6", fontWeight: "500" }}>
