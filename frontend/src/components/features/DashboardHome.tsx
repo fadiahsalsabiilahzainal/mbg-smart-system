@@ -144,6 +144,7 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
               <h3 style={{ fontSize: isMobile ? "1.1rem" : "1.3rem", color: "var(--clr-navy)", marginBottom: "14px", fontWeight: "800" }}>
                 Informasi Database & Istilah Gizi
               </h3>
+              
               <div style={{ fontSize: isMobile ? "0.85rem" : "1rem", color: "var(--clr-navy-dark)", marginBottom: "18px", lineHeight: "1.6", fontWeight: "600" }}>
                 <strong>Sumber Data Nutrisi & Standar Porsi:</strong><br/>
                 Kalkulasi gizi dasar merujuk pada metode Triangulasi Referensi Gizi (TKPI 2020, USDA FoodData Central, dan FatSecret Indonesia). Sementara untuk penentuan takaran sajian, sistem ini merujuk secara resmi pada <strong>Peraturan Menteri Kesehatan (PMK) RI No. 41 Tahun 2014</strong> tentang Pedoman Gizi Seimbang (Daftar Ukuran Rumah Tangga).
@@ -157,18 +158,17 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                 </span>
               </div>
 
-              {/* Tambahan Penjelasan URT di sini */}
               <div style={{ borderTop: "1px solid rgba(21, 55, 89, 0.1)", paddingTop: "12px", marginTop: "12px", fontSize: isMobile ? "0.85rem" : "0.95rem", color: "#475569", lineHeight: "1.6", fontWeight: "500" }}>
                 <strong>Apa itu Porsi Standar (URT)?</strong><br />
                 <span style={{ fontStyle: "italic" }}>
                   <strong>URT (Ukuran Rumah Tangga)</strong> adalah takaran porsi sajian lazim untuk sekali makan (seperti 1 potong sedang tempe = 50g). Sistem kami secara pintar mengonversi data gizi mentah (basis 100g) ke dalam takaran URT ini, dikalikan dengan nilai BDD, untuk menghasilkan perhitungan gizi bersih (Net) yang benar-benar dikonsumsi oleh siswa pada program MBG.
                 </span>
               </div>
-
             </div>
 
+            {/* TABEL DENGAN KOLOM PORSI URT DI PALING KANAN */}
             <div className="table-container" style={{ width: "100%", overflowX: "auto", paddingBottom: "10px" }}>
-              <table className="log-table" style={{ width: "100%", minWidth: "600px", borderCollapse: "collapse", fontSize: isMobile ? "0.85rem" : "1rem" }}>
+              <table className="log-table" style={{ width: "100%", minWidth: "650px", borderCollapse: "collapse", fontSize: isMobile ? "0.85rem" : "1rem" }}>
                 <thead>
                   <tr style={{ textAlign: "center", backgroundColor: "#153759", color: "white" }}>
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", textAlign: "left", whiteSpace: "nowrap", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>Jenis Makanan</th>
@@ -177,6 +177,8 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>Lemak<br/>(g)</th>
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>Karbo<br/>(g)</th>
                     <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem" }}>BDD<br/>(%)</th>
+                    {/* INI KODE TAMBAHAN HEADER URT */}
+                    <th style={{ padding: isMobile ? "12px" : "14px 12px", fontSize: isMobile ? "0.85rem" : "1.05rem", color: "#2ecc71" }}>Porsi<br/>(URT)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -188,6 +190,8 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                       <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.lemak}</td>
                       <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.karbo}</td>
                       <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "600" }}>{item.bdd}%</td>
+                      {/* INI KODE TAMBAHAN ISI DATA URT */}
+                      <td style={{ padding: isMobile ? "12px" : "14px 12px", fontWeight: "700", color: "#2ecc71" }}>{item.berat_porsi} g</td>
                     </tr>
                   ))}
                 </tbody>
