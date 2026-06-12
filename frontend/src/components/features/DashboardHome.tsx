@@ -145,16 +145,26 @@ export default function DashboardHome({ isAdmin, logEntries }: DashboardHomeProp
                 Informasi Database & Istilah Gizi
               </h3>
               <div style={{ fontSize: isMobile ? "0.85rem" : "1rem", color: "var(--clr-navy-dark)", marginBottom: "18px", lineHeight: "1.6", fontWeight: "600" }}>
-                <strong>Sumber Data Nutrisi:</strong><br/>
-                Kalkulasi gizi pada sistem ini menggunakan metode Triangulasi Referensi Gizi yang merujuk pada tiga sumber utama, yaitu <strong>Tabel Komposisi Pangan Indonesia (TKPI) 2020</strong>, <strong>USDA FoodData Central</strong>, dan <strong>FatSecret Indonesia</strong>.
+                <strong>Sumber Data Nutrisi & Standar Porsi:</strong><br/>
+                Kalkulasi gizi dasar merujuk pada metode Triangulasi Referensi Gizi (TKPI 2020, USDA FoodData Central, dan FatSecret Indonesia). Sementara untuk penentuan takaran sajian, sistem ini merujuk secara resmi pada <strong>Peraturan Menteri Kesehatan (PMK) RI No. 41 Tahun 2014</strong> tentang Pedoman Gizi Seimbang (Daftar Ukuran Rumah Tangga).
               </div>
+              
               <div style={{ borderTop: "1px solid rgba(21, 55, 89, 0.1)", paddingTop: "12px", marginTop: "12px", fontSize: isMobile ? "0.85rem" : "0.95rem", color: "#475569", lineHeight: "1.6", fontWeight: "500" }}>
                 <strong>Apa itu BDD?</strong><br />
                 <span style={{ fontStyle: "italic" }}>
-                  <strong>BDD (Berat Dapat Dimakan)</strong> adalah persentase bagian bahan makanan yang bener-bener bisa dikonsumsi setelah membuang bagian yang tidak dapat dimakan (seperti kulit pisang, tulang ayam, atau cangkang telur). 
+                  <strong>BDD (Berat Dapat Dimakan)</strong> adalah persentase bagian bahan makanan yang benar-benar bisa dikonsumsi setelah membuang bagian yang tidak dapat dimakan (seperti kulit pisang, tulang ayam, atau cangkang telur). 
                   Sistem kami secara otomatis menghitung kalori berdasarkan nilai BDD ini agar hasil lebih akurat.
                 </span>
               </div>
+
+              {/* Tambahan Penjelasan URT di sini */}
+              <div style={{ borderTop: "1px solid rgba(21, 55, 89, 0.1)", paddingTop: "12px", marginTop: "12px", fontSize: isMobile ? "0.85rem" : "0.95rem", color: "#475569", lineHeight: "1.6", fontWeight: "500" }}>
+                <strong>Apa itu Porsi Standar (URT)?</strong><br />
+                <span style={{ fontStyle: "italic" }}>
+                  <strong>URT (Ukuran Rumah Tangga)</strong> adalah takaran porsi sajian lazim untuk sekali makan (seperti 1 potong sedang tempe = 50g). Sistem kami secara pintar mengonversi data gizi mentah (basis 100g) ke dalam takaran URT ini, dikalikan dengan nilai BDD, untuk menghasilkan perhitungan gizi bersih (Net) yang benar-benar dikonsumsi oleh siswa pada program MBG.
+                </span>
+              </div>
+
             </div>
 
             <div className="table-container" style={{ width: "100%", overflowX: "auto", paddingBottom: "10px" }}>
