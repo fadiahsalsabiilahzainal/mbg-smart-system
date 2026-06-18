@@ -211,12 +211,12 @@ export default function CameraScanner({
         .filter(Boolean);
 
       const batasMinimalKalori = jenjangSekolah === "SD" ? 550 : 700;
-      let kesimpulanStatus = "LAYAK KONSUMSI";
+      let kesimpulanStatus = "TERPENUHI";
 
       if (statusNampanBasi) {
         kesimpulanStatus = "TIDAK LAYAK (BASI)";
       } else if (totalKaloriNampan < batasMinimalKalori) {
-        kesimpulanStatus = "TIDAK LAYAK (KALORI KURANG)";
+        kesimpulanStatus = "TIDAK TERPENUHI";
       }
 
       setDetectionResult({
@@ -264,7 +264,7 @@ export default function CameraScanner({
       .join("\n");
       
     const statusUtama =
-      detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+      detectionResult.total.status_keseluruhan === "TERPENUHI"
         ? "SEGAR"
         : detectionResult.total.status_keseluruhan.includes("BASI")
         ? "BASI"
@@ -348,7 +348,7 @@ Pegawai/Guru   : ${currentUser.nama_lengkap}
 
 HASIL DETEKSI SISTEM AI:
 ${daftarMakanan}
-• Kelayakan Nampan : ${detectionResult.total.status_keseluruhan}
+• Status Pemenuhan : ${detectionResult.total.status_keseluruhan}
 --------------------------------------------------
 *Laporan ini dihasilkan secara otomatis oleh MBG Smart System.`;
 
@@ -906,11 +906,11 @@ ${daftarMakanan}
                         padding: isMobile ? "2px 6px" : "4px 10px",
                         borderRadius: "20px",
                         backgroundColor:
-                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                          detectionResult.total.status_keseluruhan === "TERPENUHI"
                             ? "#dcfce7"
                             : "#fee2e2",
                         color:
-                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                          detectionResult.total.status_keseluruhan === "TERPENUHI"
                             ? "#16a34a"
                             : "#dc2626",
                         display: "flex",
@@ -920,7 +920,7 @@ ${daftarMakanan}
                     >
                       <img
                         src={
-                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                          detectionResult.total.status_keseluruhan === "TERPENUHI"
                             ? "/assets/icon-checklist.png"
                             : "/assets/icon-silang.png"
                         }
@@ -931,9 +931,11 @@ ${daftarMakanan}
                           objectFit: "contain",
                         }}
                       />
-                      {detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
-                        ? "LAYAK"
-                        : "TIDAK LAYAK"}
+                      {detectionResult.total.status_keseluruhan === "TERPENUHI"
+                        ? "TERPENUHI"
+                        : detectionResult.total.status_keseluruhan.includes("BASI")
+                        ? "TIDAK LAYAK"
+                        : "TIDAK TERPENUHI"}
                     </span>
                   </div>
                 </div>
@@ -1116,7 +1118,7 @@ ${daftarMakanan}
                 margin: "15px auto 0",
               }}
             >
-              *Catatan: Nilai gizi di atas merupakan estimasi dinamis yang telah disesuaikan dengan berat porsi aktual dan persentase Berat Dapat Dimakan (BDD), sehingga nilai dapat berbeda dari tabel referensi standar (per 100g).
+              *Catatan: Nilai gizi di atas merupakan estimasi dinamis yang telah disesuaikan dengan persentase Berat Dapat Dimakan (BDD). <b>Penentuan status pemenuhan batas kalori minimum merujuk pada standar Angka Kecukupan Gizi (PMK RI No. 28 Tahun 2019).</b>
             </div>
           )}
         </div>
