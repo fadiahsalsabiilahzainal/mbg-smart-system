@@ -212,16 +212,20 @@ export default function CameraScanner({
 
       const batasMinimalKalori = jenjangSekolah === "SD" ? 550 : 700;
       
-      // Logika Penentuan Status (Hanya Layak / Tidak Layak untuk UI)
-      let kesimpulanStatus = "Layak";
-      let statusDetailDB = "SEGAR"; // Untuk disimpan detailnya ke database
+      let statusKeamananUI = "Layak Konsumsi";
+      let statusGiziUI = "gizi terpenuhi";
+      let statusDetailDB = "SEGAR";
 
       if (statusNampanBasi) {
-        kesimpulanStatus = "Tidak Layak";
+        statusKeamananUI = "Tidak Layak Konsumsi";
         statusDetailDB = "BASI";
-      } else if (totalKaloriNampan < batasMinimalKalori) {
-        kesimpulanStatus = "Tidak Layak";
-        statusDetailDB = "KURANG KALORI";
+      }
+
+      if (totalKaloriNampan < batasMinimalKalori) {
+        statusGiziUI = "gizi tidak terpenuhi";
+        if (!statusNampanBasi) {
+          statusDetailDB = "KURANG KALORI";
+        }
       }
 
       setDetectionResult({
@@ -233,7 +237,8 @@ export default function CameraScanner({
             mappedItems.length > 0
               ? akumulasiConfidence / mappedItems.length
               : 0,
-          status_keseluruhan: kesimpulanStatus,
+          status_keamanan: statusKeamananUI,
+          status_gizi: statusGiziUI,
           status_db: statusDetailDB,
         },
       });
@@ -269,7 +274,6 @@ export default function CameraScanner({
       .map((i: any) => `${i.jenis_makanan} - ${i.status}`)
       .join("\n");
       
-    // Menyimpan detail asli ke database (SEGAR, BASI, atau KURANG KALORI)
     const statusUtama = detectionResult.total.status_db || "SEGAR";
 
     try {
@@ -344,13 +348,14 @@ export default function CameraScanner({
       const shareText = `LAPORAN PEMERIKSAAN KUALITAS GIZI (${jenjangSekolah})
 PROGRAM MAKAN BERGIZI GRATIS (MBG)
 --------------------------------------------------
-Tanggal/Waktu  : ${waktuSekarang}
-Lokasi Tugas   : ${koordinat.split("\n")[0]}
-Pegawai/Guru   : ${currentUser.nama_lengkap}
+Tanggal/Waktu    : ${waktuSekarang}
+Lokasi Tugas     : ${koordinat.split("\n")[0]}
+Pegawai/Guru     : ${currentUser.nama_lengkap}
 
 HASIL DETEKSI SISTEM AI:
 ${daftarMakanan}
-• Status Kelayakan : ${detectionResult.total.status_keseluruhan}
+• Status Keamanan : ${detectionResult.total.status_keamanan}
+• Kebutuhan Gizi  : ${detectionResult.total.status_gizi}
 --------------------------------------------------
 *Laporan ini dihasilkan secara otomatis oleh MBG Smart System.`;
 
@@ -865,7 +870,6 @@ ${daftarMakanan}
                   border: "1px solid rgba(255, 255, 255, 0.5)",
                 }}
               >
-                {/* BARIS 1: STATUS KELAYAKAN */}
                 <div
                   style={{
                     display: "flex",
@@ -886,23 +890,22 @@ ${daftarMakanan}
                       fontWeight: "800",
                       padding: isMobile ? "4px 8px" : "6px 12px",
                       borderRadius: "20px",
-                      backgroundColor: detectionResult.total.status_keseluruhan === "Layak" ? "#dcfce7" : "#fee2e2",
-                      color: detectionResult.total.status_keseluruhan === "Layak" ? "#16a34a" : "#dc2626",
+                      backgroundColor: detectionResult.total.status_keamanan === "Layak Konsumsi" ? "#dcfce7" : "#fee2e2",
+                      color: detectionResult.total.status_keamanan === "Layak Konsumsi" ? "#16a34a" : "#dc2626",
                       display: "flex",
                       alignItems: "center",
                       gap: "6px",
                     }}
                   >
                     <img
-                      src={detectionResult.total.status_keseluruhan === "Layak" ? "/assets/icon-checklist.png" : "/assets/icon-silang.png"}
+                      src={detectionResult.total.status_keamanan === "Layak Konsumsi" ? "/assets/icon-checklist.png" : "/assets/icon-silang.png"}
                       alt="Status"
                       style={{ width: isMobile ? "12px" : "16px", height: isMobile ? "12px" : "16px", objectFit: "contain" }}
                     />
-                    {detectionResult.total.status_keseluruhan}
+                    {detectionResult.total.status_keamanan}
                   </span>
                 </div>
 
-                {/* BARIS 2: TOTAL KALORI */}
                 <div
                   style={{
                     display: "flex",
@@ -917,12 +920,11 @@ ${daftarMakanan}
                   <span style={{ fontSize: isMobile ? "0.75rem" : "1.05rem", fontWeight: "800", color: "#1e293b" }}>
                     Total Kalori ({jenjangSekolah}):
                   </span>
-                  <span style={{ fontSize: isMobile ? "0.9rem" : "1.3rem", fontWeight: "800", color: "#0f172a" }}>
-                    {detectionResult.total.kalori.toFixed(1)} <span style={{ fontSize: isMobile ? "0.6rem" : "0.9rem", fontWeight: "700", color: "#334155" }}>kkal</span>
+                  <span style={{ fontSize: isMobile ? "0.9rem" : "1.3rem", fontWeight: "800", color: "#1e293b" }}>
+                    {detectionResult.total.kalori.toFixed(1)} <span style={{ fontSize: isMobile ? "0.7rem" : "1rem", fontWeight: "700", color: "#334155" }}>kkal ({detectionResult.total.status_gizi})</span>
                   </span>
                 </div>
 
-                {/* BARIS 3: LOKASI (Alamat Kiri, Koordinat Kanan) */}
                 <div
                   style={{
                     display: "flex",
