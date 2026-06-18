@@ -1116,7 +1116,7 @@ ${daftarMakanan}
                 margin: "15px auto 0",
               }}
             >
-              *Catatan: Nilai gizi adalah di atas merupakan estimasi dinamis yang telah disesuaikan dengan berat porsi aktual dan persentase Berat Dapat Dimakan (BDD), sehingga nilai dapat berbeda dari tabel referensi standar (per 100g).
+              *Catatan: Nilai gizi di atas merupakan estimasi dinamis yang telah disesuaikan dengan berat porsi aktual dan persentase Berat Dapat Dimakan (BDD), sehingga nilai dapat berbeda dari tabel referensi standar (per 100g).
             </div>
           )}
         </div>
