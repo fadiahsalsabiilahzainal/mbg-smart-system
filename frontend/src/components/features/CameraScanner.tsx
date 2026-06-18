@@ -211,12 +211,17 @@ export default function CameraScanner({
         .filter(Boolean);
 
       const batasMinimalKalori = jenjangSekolah === "SD" ? 550 : 700;
-      let kesimpulanStatus = "TERPENUHI";
+      
+      // Logika Penentuan Status (Hanya Layak / Tidak Layak untuk UI)
+      let kesimpulanStatus = "Layak";
+      let statusDetailDB = "SEGAR"; // Untuk disimpan detailnya ke database
 
       if (statusNampanBasi) {
-        kesimpulanStatus = "TIDAK LAYAK (BASI)";
+        kesimpulanStatus = "Tidak Layak";
+        statusDetailDB = "BASI";
       } else if (totalKaloriNampan < batasMinimalKalori) {
-        kesimpulanStatus = "TIDAK TERPENUHI";
+        kesimpulanStatus = "Tidak Layak";
+        statusDetailDB = "KURANG KALORI";
       }
 
       setDetectionResult({
@@ -229,6 +234,7 @@ export default function CameraScanner({
               ? akumulasiConfidence / mappedItems.length
               : 0,
           status_keseluruhan: kesimpulanStatus,
+          status_db: statusDetailDB,
         },
       });
     } catch (error) {
@@ -263,12 +269,8 @@ export default function CameraScanner({
       .map((i: any) => `${i.jenis_makanan} - ${i.status}`)
       .join("\n");
       
-    const statusUtama =
-      detectionResult.total.status_keseluruhan === "TERPENUHI"
-        ? "SEGAR"
-        : detectionResult.total.status_keseluruhan.includes("BASI")
-        ? "BASI"
-        : "KURANG KALORI";
+    // Menyimpan detail asli ke database (SEGAR, BASI, atau KURANG KALORI)
+    const statusUtama = detectionResult.total.status_db || "SEGAR";
 
     try {
       const { error } = await supabase.from("riwayat").insert([
@@ -348,7 +350,7 @@ Pegawai/Guru   : ${currentUser.nama_lengkap}
 
 HASIL DETEKSI SISTEM AI:
 ${daftarMakanan}
-• Status Pemenuhan : ${detectionResult.total.status_keseluruhan}
+• Status Kelayakan : ${detectionResult.total.status_keseluruhan}
 --------------------------------------------------
 *Laporan ini dihasilkan secara otomatis oleh MBG Smart System.`;
 
@@ -850,136 +852,127 @@ ${daftarMakanan}
                   bottom: isMobile ? "6px" : "15px",
                   left: isMobile ? "6px" : "15px",
                   right: isMobile ? "6px" : "15px",
-                  background: "rgba(255, 255, 255, 0.8)",
+                  background: "rgba(255, 255, 255, 0.95)",
                   color: "var(--clr-navy)",
-                  padding: isMobile ? "4px 8px" : "14px 24px",
+                  padding: isMobile ? "8px 12px" : "16px 24px",
                   borderRadius: isMobile ? "8px" : "16px",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "stretch",
-                  gap: isMobile ? "2px" : "4px",
                   backdropFilter: "blur(4px)",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+                  boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
                   zIndex: 10,
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  border: "1px solid rgba(255, 255, 255, 0.5)",
                 }}
               >
+                {/* BARIS 1: STATUS KELAYAKAN */}
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
-                    marginBottom: isMobile ? "1px" : "8px",
-                    paddingBottom: isMobile ? "2px" : "8px",
-                    borderBottom: "1px dashed #cbd5e1",
+                    marginBottom: isMobile ? "4px" : "8px",
+                    paddingBottom: isMobile ? "4px" : "8px",
+                    borderBottom: "1px solid #e2e8f0",
                   }}
                 >
+                  <span style={{ fontSize: isMobile ? "0.75rem" : "1.05rem", fontWeight: "800", color: "#1e293b" }}>
+                    Status Kelayakan:
+                  </span>
                   <span
                     style={{
-                      fontSize: isMobile ? "0.6rem" : "1rem",
-                      fontWeight: "700",
-                      color: "#153759",
+                      fontSize: isMobile ? "0.65rem" : "0.95rem",
+                      fontWeight: "800",
+                      padding: isMobile ? "4px 8px" : "6px 12px",
+                      borderRadius: "20px",
+                      backgroundColor: detectionResult.total.status_keseluruhan === "Layak" ? "#dcfce7" : "#fee2e2",
+                      color: detectionResult.total.status_keseluruhan === "Layak" ? "#16a34a" : "#dc2626",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
                     }}
                   >
-                    {isMobile ? "Total:" : `Total Kalori (${jenjangSekolah}):`}
+                    <img
+                      src={detectionResult.total.status_keseluruhan === "Layak" ? "/assets/icon-checklist.png" : "/assets/icon-silang.png"}
+                      alt="Status"
+                      style={{ width: isMobile ? "12px" : "16px", height: isMobile ? "12px" : "16px", objectFit: "contain" }}
+                    />
+                    {detectionResult.total.status_keseluruhan}
                   </span>
-                  
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span
-                      style={{
-                        fontSize: isMobile ? "0.75rem" : "1.35rem",
-                        fontWeight: "800",
-                        color: "#153759",
-                      }}
-                    >
-                      {detectionResult.total.kalori.toFixed(1)}{" "}
-                      <span style={{ fontSize: isMobile ? "0.55rem" : "0.9rem" }}>
-                        kkal
-                      </span>
-                    </span>
-
-                    <span
-                      style={{
-                        fontSize: isMobile ? "0.6rem" : "0.85rem",
-                        fontWeight: "800",
-                        padding: isMobile ? "2px 6px" : "4px 10px",
-                        borderRadius: "20px",
-                        backgroundColor:
-                          detectionResult.total.status_keseluruhan === "TERPENUHI"
-                            ? "#dcfce7"
-                            : "#fee2e2",
-                        color:
-                          detectionResult.total.status_keseluruhan === "TERPENUHI"
-                            ? "#16a34a"
-                            : "#dc2626",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      <img
-                        src={
-                          detectionResult.total.status_keseluruhan === "TERPENUHI"
-                            ? "/assets/icon-checklist.png"
-                            : "/assets/icon-silang.png"
-                        }
-                        alt="Status"
-                        style={{
-                          width: isMobile ? "12px" : "16px",
-                          height: isMobile ? "12px" : "16px",
-                          objectFit: "contain",
-                        }}
-                      />
-                      {detectionResult.total.status_keseluruhan === "TERPENUHI"
-                        ? "TERPENUHI"
-                        : detectionResult.total.status_keseluruhan === "TIDAK TERPENUHI"
-                        ? "TIDAK TERPENUHI"
-                        : "TIDAK LAYAK"}
-                    </span>
-                  </div>
                 </div>
 
+                {/* BARIS 2: TOTAL KALORI */}
                 <div
                   style={{
-                    fontWeight: "800",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    marginBottom: isMobile ? "4px" : "8px",
+                    paddingBottom: isMobile ? "4px" : "8px",
+                    borderBottom: "1px solid #e2e8f0",
+                  }}
+                >
+                  <span style={{ fontSize: isMobile ? "0.75rem" : "1.05rem", fontWeight: "800", color: "#1e293b" }}>
+                    Total Kalori ({jenjangSekolah}):
+                  </span>
+                  <span style={{ fontSize: isMobile ? "0.9rem" : "1.3rem", fontWeight: "800", color: "#0f172a" }}>
+                    {detectionResult.total.kalori.toFixed(1)} <span style={{ fontSize: isMobile ? "0.6rem" : "0.9rem", fontWeight: "700", color: "#334155" }}>kkal</span>
+                  </span>
+                </div>
+
+                {/* BARIS 3: LOKASI (Alamat Kiri, Koordinat Kanan) */}
+                <div
+                  style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    gap: "10px",
-                    fontSize: isMobile ? "0.55rem" : "0.95rem",
                     width: "100%",
-                    lineHeight: "1.2",
+                    paddingTop: "2px",
                   }}
                 >
                   <div
                     style={{
                       display: "flex",
                       alignItems: "center",
-                      gap: "4px",
+                      gap: "6px",
+                      flex: 1,
+                      overflow: "hidden",
+                      marginRight: "10px"
                     }}
                   >
                     <img
                       src="/assets/icon-lokasi.png"
                       alt="Icon Lokasi"
                       style={{
-                        width: isMobile ? "10px" : "20px",
-                        height: isMobile ? "10px" : "20px",
+                        width: isMobile ? "12px" : "16px",
+                        height: isMobile ? "12px" : "16px",
                         objectFit: "contain",
+                        flexShrink: 0
                       }}
                     />
-                    <span style={{ textAlign: "left" }}>
+                    <span 
+                      style={{ 
+                        fontSize: isMobile ? "0.6rem" : "0.85rem", 
+                        fontWeight: "700", 
+                        color: "#334155",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis"
+                      }}
+                    >
                       {koordinat?.split("\n")?.[0] || "Menunggu lokasi..."}
                     </span>
                   </div>
                   {koordinat?.includes("\n") && (
                     <span
                       style={{
-                        fontSize: isMobile ? "0.45rem" : "0.75rem",
-                        color: "var(--clr-gray-500)",
-                        fontFamily: "monospace",
+                        fontSize: isMobile ? "0.5rem" : "0.75rem",
+                        color: "#64748b",
                         fontWeight: "600",
                         whiteSpace: "nowrap",
+                        flexShrink: 0
                       }}
                     >
                       {koordinat.split("\n")[1]}
