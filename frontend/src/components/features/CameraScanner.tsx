@@ -890,8 +890,8 @@ ${daftarMakanan}
                     <img
                       src={
                         detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
-                          ? "/assets/icon-lolos.png"
-                          : "/assets/icon-tidak-lolos.png"
+                          ? "/assets/icon-checklist.png"
+                          : "/assets/icon-silang.png"
                       }
                       alt="Status"
                       style={{
