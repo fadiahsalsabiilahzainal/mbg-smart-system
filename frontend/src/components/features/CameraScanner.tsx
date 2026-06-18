@@ -933,9 +933,9 @@ ${daftarMakanan}
                       />
                       {detectionResult.total.status_keseluruhan === "TERPENUHI"
                         ? "TERPENUHI"
-                        : detectionResult.total.status_keseluruhan.includes("BASI")
-                        ? "TIDAK LAYAK"
-                        : "TIDAK TERPENUHI"}
+                        : detectionResult.total.status_keseluruhan === "TIDAK TERPENUHI"
+                        ? "TIDAK TERPENUHI"
+                        : "TIDAK LAYAK"}
                     </span>
                   </div>
                 </div>
