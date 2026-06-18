@@ -931,7 +931,11 @@ ${daftarMakanan}
                           objectFit: "contain",
                         }}
                       />
-                      {detectionResult.total.status_keseluruhan}
+                      {detectionResult.total.status_keseluruhan === "TERPENUHI"
+                        ? "TERPENUHI"
+                        : detectionResult.total.status_keseluruhan === "TIDAK TERPENUHI"
+                        ? "TIDAK TERPENUHI"
+                        : "TIDAK LAYAK"}
                     </span>
                   </div>
                 </div>
