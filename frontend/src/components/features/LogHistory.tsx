@@ -138,6 +138,22 @@ export default function LogHistory({
                 displayedLogs.map((log, i) => {
                   const parsedItems = parseMakananData(log.jenis_makanan);
                   const isExpanded = expandedRows.includes(i);
+                  
+                  // Logika Validasi UI dari Status DB
+                  const statusDB = (log.status || "").toUpperCase();
+                  let isLayak = true;
+                  let statusKeamananUI = "Layak Konsumsi";
+                  let statusGiziUI = "gizi terpenuhi";
+
+                  if (statusDB.includes("BASI") || statusDB.includes("TIDAK LAYAK")) {
+                    isLayak = false;
+                    statusKeamananUI = "Tidak Layak Konsumsi";
+                    statusGiziUI = "gizi tidak terpenuhi";
+                  } else if (statusDB.includes("KURANG KALORI")) {
+                    isLayak = true;
+                    statusKeamananUI = "Layak Konsumsi";
+                    statusGiziUI = "gizi tidak terpenuhi";
+                  }
 
                   return (
                     <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", backgroundColor: "white", transition: "all 0.2s" }} onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#f8fafc"} onMouseOut={(e) => e.currentTarget.style.backgroundColor = "white"}>
@@ -215,7 +231,6 @@ export default function LogHistory({
                                     )}
                                   </div>
                                   
-                                  {/* BLOK INI DIPAKSA TETAP MUNCUL JIKA OBJEK GIZI BERHASIL DIPARSING */}
                                   {item.gizi ? (
                                     <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
                                       <span style={{ backgroundColor: "white", padding: isMobile ? "4px 8px" : "5px 10px", borderRadius: "6px", fontSize: isMobile ? "0.7rem" : "0.8rem", fontWeight: "700", color: "#475569", border: "1px solid #cbd5e1" }}>Kal: {item.gizi.kalori}</span>
@@ -224,7 +239,6 @@ export default function LogHistory({
                                       <span style={{ backgroundColor: "white", padding: isMobile ? "4px 8px" : "5px 10px", borderRadius: "6px", fontSize: isMobile ? "0.7rem" : "0.8rem", fontWeight: "700", color: "#475569", border: "1px solid #cbd5e1" }}>Kar: {item.gizi.karbo}g</span>
                                     </div>
                                   ) : (
-                                    /* JIKA DATABASE_GIZI TIDAK MATCH, MAKA KALKULASI BERDASARKAN BACKEND ATAU DEFAULT NYATA */
                                     <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
                                       <span style={{ backgroundColor: "white", padding: isMobile ? "4px 8px" : "5px 10px", borderRadius: "6px", fontSize: isMobile ? "0.7rem" : "0.8rem", fontWeight: "700", color: "#475569", border: "1px solid #cbd5e1" }}>Kal: {log.kalori || 175}</span>
                                       <span style={{ backgroundColor: "white", padding: isMobile ? "4px 8px" : "5px 10px", borderRadius: "6px", fontSize: isMobile ? "0.7rem" : "0.8rem", fontWeight: "700", color: "#475569", border: "1px solid #cbd5e1" }}>Pro: {log.protein || 4.1}g</span>
@@ -235,15 +249,34 @@ export default function LogHistory({
                                 </div>
                               ))}
                               
-                              <div style={{
-                                marginTop: "6px", paddingTop: "12px", borderTop: "1px dashed #cbd5e1",
-                                display: "flex", justifyContent: "space-between", alignItems: "center"
-                              }}>
-                                <span style={{ fontSize: "0.85rem", fontWeight: "700", color: "#64748b" }}>Total Kalori Nampan:</span>
-                                <span style={{ fontSize: isMobile ? "0.85rem" : "1rem", fontWeight: "800", color: "#0ea5e9", backgroundColor: "#f0f9ff", padding: "5px 12px", borderRadius: "6px", border: "1px solid #bae6fd" }}>
-                                  {log.kalori} kkal
-                                </span>
+                              {/* --- MODIFIKASI STATUS KELAYAKAN & GIZI --- */}
+                              <div style={{ marginTop: "6px", display: "flex", flexDirection: "column", gap: "8px", borderTop: "1px dashed #cbd5e1", paddingTop: "12px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "8px" }}>
+                                  <span style={{ fontSize: isMobile ? "0.8rem" : "0.85rem", fontWeight: "700", color: "#64748b" }}>Status Kelayakan:</span>
+                                  <span style={{
+                                    fontSize: isMobile ? "0.65rem" : "0.75rem",
+                                    fontWeight: "800",
+                                    padding: "4px 10px",
+                                    borderRadius: "20px",
+                                    backgroundColor: isLayak ? "#dcfce7" : "#fee2e2",
+                                    color: isLayak ? "#16a34a" : "#dc2626",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "6px"
+                                  }}>
+                                    <img src={isLayak ? "/assets/icon-checklist.png" : "/assets/icon-silang.png"} alt="Status" style={{ width: "12px", height: "12px", objectFit: "contain" }} />
+                                    {statusKeamananUI}
+                                  </span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <span style={{ fontSize: isMobile ? "0.8rem" : "0.85rem", fontWeight: "700", color: "#64748b" }}>Total Kalori Nampan:</span>
+                                  <span style={{ fontSize: isMobile ? "0.85rem" : "1rem", fontWeight: "800", color: "#1e293b" }}>
+                                    {log.kalori || 0} <span style={{ fontSize: isMobile ? "0.65rem" : "0.8rem", fontWeight: "700", color: "#334155" }}>kkal ({statusGiziUI})</span>
+                                  </span>
+                                </div>
                               </div>
+                              {/* ----------------------------------------- */}
+
                             </div>
                           )}
                         </div>
