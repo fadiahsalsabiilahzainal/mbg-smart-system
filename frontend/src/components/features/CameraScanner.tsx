@@ -3,7 +3,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-// Setup Library & Tipe Data
 import React, { useState, useEffect, useRef } from "react";
 import html2canvas from "html2canvas";
 import { supabase } from "../../lib/supabase";
@@ -20,7 +19,6 @@ export default function CameraScanner({
   onSaveSuccess,
   showToast,
 }: CameraScannerProps) {
-  // State untuk Kamera, Hasil AI, dan Lokasi GPS
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,7 +31,6 @@ export default function CameraScanner({
   const [isMobile, setIsMobile] = useState(false);
   const [jenjangSekolah, setJenjangSekolah] = useState<"SD" | "SMP_SMA">("SD");
 
-  // Deteksi Ukuran Layar
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     handleResize();
@@ -41,7 +38,6 @@ export default function CameraScanner({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Mengambil Koordinat & Alamat Lokasi (GPS)
   useEffect(() => {
     if ("geolocation" in navigator) {
       setKoordinat("Mencari lokasi & alamat...");
@@ -80,14 +76,12 @@ export default function CameraScanner({
     }
   }, []);
 
-  // Manajemen Siklus Hidup Kamera
   useEffect(() => {
     if (cameraMode === "input") startCamera();
     else stopCamera();
     return () => stopCamera();
   }, [cameraMode]);
 
-  // Fungsi Buka & Tutup Kamera
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -107,7 +101,6 @@ export default function CameraScanner({
     }
   };
 
-  // Fungsi Ambil Foto & Unggah Galeri
   const handleCapture = () => {
     if (!videoRef.current) return;
     const canvas = document.createElement("canvas");
@@ -133,7 +126,6 @@ export default function CameraScanner({
     }
   };
 
-  // Proses Pengiriman Gambar ke Model AI YOLOv11 (Backend)
   const processAI = async (imageSrc: string) => {
     stopCamera();
     setCameraMode("result");
@@ -168,10 +160,8 @@ export default function CameraScanner({
       let akumulasiConfidence = 0;
       let statusNampanBasi = false;
 
-      // Kalkulasi Estimasi Gizi Berdasarkan Output YOLO
       const mappedItems = hasilDeteksi
         .map((itemAI: any) => {
-          // aku ubah disini ya
           if (itemAI.akurasi < 0.5 || (itemAI.akurasi > 1 && itemAI.akurasi < 50)) return null;
 
           const class_key = itemAI.lauk;
@@ -185,13 +175,11 @@ export default function CameraScanner({
 
             const beratRiil = beratAwal * (info_gizi.bdd / 100);
             
-            // JURUS 1: Hitung normal dulu pakai variabel let
             let kaloriItem = info_gizi.kalori * (beratRiil / 100);
             let proteinItem = info_gizi.protein * (beratRiil / 100);
             let lemakItem = info_gizi.lemak * (beratRiil / 100);
             let karboItem = info_gizi.karbo * (beratRiil / 100);
 
-            // JURUS 1 (Lanjutan): Nol-kan jika Basi
             if (itemAI.kondisi === "BASI") {
               statusNampanBasi = true;
               kaloriItem = 0;
@@ -211,7 +199,6 @@ export default function CameraScanner({
               y: itemAI.koordinat.y,
               status: itemAI.kondisi,
               confidence: akurasiNormal,
-              // JURUS 2: Tampilkan berat Netto (BDD) di UI
               jenis_makanan: `${info_gizi.nama} (${beratAwal}g | Net: ${Number.isInteger(beratRiil) ? beratRiil : beratRiil.toFixed(1)}g)`,
               kalori: kaloriItem,
               protein: proteinItem,
@@ -248,7 +235,6 @@ export default function CameraScanner({
     }
   };
 
-  // Fungsi Menyimpan Hasil Analisis ke Database Supabase
   const handleSaveResult = async () => {
     if (
       !detectionResult ||
@@ -303,7 +289,6 @@ export default function CameraScanner({
     }
   };
 
-  // Fungsi Bagikan Laporan ke Aplikasi Lain (WhatsApp, dll)
   const handleShare = async () => {
     if (
       !detectionResult ||
@@ -382,7 +367,6 @@ ${daftarMakanan}
     }
   };
 
-  // Render UI Scanner
   return (
     <div
       className="dash-view active"
@@ -787,7 +771,6 @@ ${daftarMakanan}
                             justifyContent: "space-between",
                           }}
                         >
-                          {/* JURUS 3: Gunakan toFixed(1) di semua baris ini */}
                           <span>Kalori:</span>{" "}
                           <b>{item.kalori.toFixed(1)} kkal</b>
                         </div>
@@ -877,6 +860,69 @@ ${daftarMakanan}
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
+                    marginBottom: isMobile ? "1px" : "6px",
+                    paddingBottom: isMobile ? "2px" : "6px",
+                    borderBottom: "1px dashed #cbd5e1",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: isMobile ? "0.6rem" : "1rem",
+                      fontWeight: "700",
+                      color: "#153759",
+                    }}
+                  >
+                    {isMobile ? "Status:" : "Status Kelayakan:"}
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      background:
+                        detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                          ? "#dcfce7"
+                          : "#fee2e2",
+                      padding: isMobile ? "2px 6px" : "4px 12px",
+                      borderRadius: "20px",
+                    }}
+                  >
+                    <img
+                      src={
+                        detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                          ? "/assets/icon-lolos.png"
+                          : "/assets/icon-tidak-lolos.png"
+                      }
+                      alt="Status"
+                      style={{
+                        width: isMobile ? "12px" : "18px",
+                        height: isMobile ? "12px" : "18px",
+                        objectFit: "contain",
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontSize: isMobile ? "0.65rem" : "0.95rem",
+                        fontWeight: "800",
+                        color:
+                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                            ? "#16a34a"
+                            : "#dc2626",
+                      }}
+                    >
+                      {detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                        ? "Lolos"
+                        : "Tidak Lolos"}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
                     marginBottom: isMobile ? "1px" : "8px",
                     paddingBottom: isMobile ? "2px" : "8px",
                     borderBottom: "1px dashed #cbd5e1",
@@ -898,7 +944,6 @@ ${daftarMakanan}
                       color: "#153759",
                     }}
                   >
-                    {/* JURUS 3: Gunakan toFixed(1) untuk kalori total */}
                     {detectionResult.total.kalori.toFixed(1)}{" "}
                     <span style={{ fontSize: isMobile ? "0.55rem" : "0.9rem" }}>
                       kkal
