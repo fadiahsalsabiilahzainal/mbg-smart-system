@@ -210,6 +210,15 @@ export default function CameraScanner({
         })
         .filter(Boolean);
 
+      const batasMinimalKalori = jenjangSekolah === "SD" ? 550 : 700;
+      let kesimpulanStatus = "LAYAK KONSUMSI";
+
+      if (statusNampanBasi) {
+        kesimpulanStatus = "TIDAK LAYAK (BASI)";
+      } else if (totalKaloriNampan < batasMinimalKalori) {
+        kesimpulanStatus = "TIDAK LAYAK (KALORI KURANG)";
+      }
+
       setDetectionResult({
         image: imageSrc,
         items: mappedItems,
@@ -219,9 +228,7 @@ export default function CameraScanner({
             mappedItems.length > 0
               ? akumulasiConfidence / mappedItems.length
               : 0,
-          status_keseluruhan: statusNampanBasi
-            ? "TIDAK LAYAK"
-            : "LAYAK KONSUMSI",
+          status_keseluruhan: kesimpulanStatus,
         },
       });
     } catch (error) {
@@ -255,10 +262,13 @@ export default function CameraScanner({
     const jenisMakananGabungan = detectionResult.items
       .map((i: any) => `${i.jenis_makanan} - ${i.status}`)
       .join("\n");
+      
     const statusUtama =
       detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
         ? "SEGAR"
-        : "BASI";
+        : detectionResult.total.status_keseluruhan.includes("BASI")
+        ? "BASI"
+        : "KURANG KALORI";
 
     try {
       const { error } = await supabase.from("riwayat").insert([
@@ -860,69 +870,6 @@ ${daftarMakanan}
                     justifyContent: "space-between",
                     alignItems: "center",
                     width: "100%",
-                    marginBottom: isMobile ? "1px" : "6px",
-                    paddingBottom: isMobile ? "2px" : "6px",
-                    borderBottom: "1px dashed #cbd5e1",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: isMobile ? "0.6rem" : "1rem",
-                      fontWeight: "700",
-                      color: "#153759",
-                    }}
-                  >
-                    {isMobile ? "Status:" : "Status Kelayakan:"}
-                  </span>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      background:
-                        detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
-                          ? "#dcfce7"
-                          : "#fee2e2",
-                      padding: isMobile ? "2px 6px" : "4px 12px",
-                      borderRadius: "20px",
-                    }}
-                  >
-                    <img
-                      src={
-                        detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
-                          ? "/assets/icon-checklist.png"
-                          : "/assets/icon-silang.png"
-                      }
-                      alt="Status"
-                      style={{
-                        width: isMobile ? "12px" : "18px",
-                        height: isMobile ? "12px" : "18px",
-                        objectFit: "contain",
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: isMobile ? "0.65rem" : "0.95rem",
-                        fontWeight: "800",
-                        color:
-                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
-                            ? "#16a34a"
-                            : "#dc2626",
-                      }}
-                    >
-                      {detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
-                        ? "Lolos"
-                        : "Tidak Lolos"}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
                     marginBottom: isMobile ? "1px" : "8px",
                     paddingBottom: isMobile ? "2px" : "8px",
                     borderBottom: "1px dashed #cbd5e1",
@@ -937,18 +884,58 @@ ${daftarMakanan}
                   >
                     {isMobile ? "Total:" : `Total Kalori (${jenjangSekolah}):`}
                   </span>
-                  <span
-                    style={{
-                      fontSize: isMobile ? "0.75rem" : "1.35rem",
-                      fontWeight: "800",
-                      color: "#153759",
-                    }}
-                  >
-                    {detectionResult.total.kalori.toFixed(1)}{" "}
-                    <span style={{ fontSize: isMobile ? "0.55rem" : "0.9rem" }}>
-                      kkal
+                  
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span
+                      style={{
+                        fontSize: isMobile ? "0.75rem" : "1.35rem",
+                        fontWeight: "800",
+                        color: "#153759",
+                      }}
+                    >
+                      {detectionResult.total.kalori.toFixed(1)}{" "}
+                      <span style={{ fontSize: isMobile ? "0.55rem" : "0.9rem" }}>
+                        kkal
+                      </span>
                     </span>
-                  </span>
+
+                    <span
+                      style={{
+                        fontSize: isMobile ? "0.6rem" : "0.85rem",
+                        fontWeight: "800",
+                        padding: isMobile ? "2px 6px" : "4px 10px",
+                        borderRadius: "20px",
+                        backgroundColor:
+                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                            ? "#dcfce7"
+                            : "#fee2e2",
+                        color:
+                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                            ? "#16a34a"
+                            : "#dc2626",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <img
+                        src={
+                          detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                            ? "/assets/icon-checklist.png"
+                            : "/assets/icon-silang.png"
+                        }
+                        alt="Status"
+                        style={{
+                          width: isMobile ? "12px" : "16px",
+                          height: isMobile ? "12px" : "16px",
+                          objectFit: "contain",
+                        }}
+                      />
+                      {detectionResult.total.status_keseluruhan === "LAYAK KONSUMSI"
+                        ? "LAYAK"
+                        : "TIDAK LAYAK"}
+                    </span>
+                  </div>
                 </div>
 
                 <div
